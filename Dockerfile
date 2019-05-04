@@ -46,8 +46,6 @@ RUN pip3 install --user -r /tmp/requirements.txt
 COPY scripts /tmp/installsolc
 RUN cd /tmp/ && python3 -m installsolc.install_solc
 
-RUN mkdir /sec
-
 WORKDIR /sec
 
 # To cache gradle distribution
