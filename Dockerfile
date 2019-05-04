@@ -28,25 +28,30 @@ RUN apt-get update && apt-get -y install\
         openjdk-8-jdk\
         python3-pip
 
-COPY requirements.txt /tmp/
+# install truffle for project compilation
+RUN apt-get update && apt-get install -y\
+      nodejs\
+      npm
+      
+ARG truffle="latest"
+RUN npm install -g truffle@$truffle
+
+RUN useradd -m securify
+USER securify
+
+COPY --chown=securify:securify requirements.txt /tmp/
 RUN pip3 install --user -r /tmp/requirements.txt
 
 COPY scripts /tmp/installsolc
 RUN cd /tmp/ && python3 -m installsolc.install_solc
 
-# install truffle for project compilation
-RUN apt-get update && apt-get install -y\
-      nodejs\
-      npm
-
-ARG truffle="latest"
-RUN npm install -g truffle@$truffle
+RUN mkdir /sec
 
 WORKDIR /sec
 
 # To cache gradle distribution
-COPY gradlew settings.gradle /sec/
-COPY gradle /sec/gradle/
+COPY --chown=securify:securify gradlew settings.gradle /sec/
+COPY --chown=securify:securify gradle /sec/gradle/
 RUN ./gradlew -v
 
 # copy and compile securify
