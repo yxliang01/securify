@@ -37,6 +37,7 @@ ARG truffle="latest"
 RUN npm install -g truffle@$truffle
 
 RUN useradd -m securify
+RUN mkdir /sec && chown -R securify:securify /sec
 USER securify
 
 COPY --chown=securify:securify requirements.txt /tmp/
@@ -55,7 +56,7 @@ COPY --chown=securify:securify gradle /sec/gradle/
 RUN ./gradlew -v
 
 # copy and compile securify
-COPY . /sec
+COPY --chown=securify:securify . /sec
 
 RUN ./gradlew jar
 
